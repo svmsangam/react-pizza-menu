@@ -69,35 +69,43 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza
-        name="Focaccia"
-        ingredients="Bread with italian olive oil and rosemary"
-        price={6}
-        photoName="pizzas/focaccia.jpg"
-      />
-      <Pizza
-        name="Focaccia"
-        ingredients="Bread with italian olive oil and rosemary"
-        price={6}
-        photoName="pizzas/focaccia.jpg"
-      />
+      {pizzas.length > 0 ? (
+        // React fragment <></> can be used to gruop multiple html elements in jsx without defining a root element.
+        <>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In dictum,
+            mi a pretium dignissim, erat lorem porta mauris, ac ullamcorper
+            felis eros eu justo. Nulla eros tortor, rutrum et elit non,
+            dignissim volutpat urna.
+          </p>
+          <ul className="pizzas">
+            {pizzas.map((pizza) => (
+              <Pizza pizza={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>We're currently working on our menu!!</p>
+      )}
     </main>
   );
 }
 
-function Pizza(props) {
+function Pizza({ pizza }) {
+  const soldout = pizza.soldOut ? "sold-out" : null;
   return (
-    <div className="pizza">
-      <img src={props.photoName} alt="Focaccia Pizza" />
+    <li className={`pizza ${soldout}`}>
+      <img src={pizza.photoName} alt="Focaccia Pizza" />
       <div>
-        <h3>{props.name}</h3>
-        <p>{props.ingredients}</p>
-        <span>{props.price}</span>
+        <h3>{pizza.name}</h3>
+        <p>{pizza.ingredients}</p>
+        <span>{soldout ? "Sold Out" : pizza.price}</span>
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -105,18 +113,32 @@ function Footer() {
   //createElement(elementName, props, text)
   //  return React.createElement("footer", null, "We're currently open!!");
   const hours = new Date().getHours();
-  const openHour = 11;
+  const openHour = 12;
   const closeHour = 22;
   const isOpen = hours >= openHour && hours <= closeHour;
   console.log(isOpen);
 
   return (
     <footer className="footer">
-      We are currently open!! <span>{new Date().toLocaleTimeString()}</span>
+      {isOpen ? (
+        <Order closeHour={closeHour} />
+      ) : (
+        <p>
+          We are happy to welcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
+      ;
     </footer>
   );
 }
-
+function Order(props) {
+  return (
+    <div className="order">
+      <p>We are open until {props.closeHour}:00 </p>
+      <button className="btn">Order</button>
+    </div>
+  );
+}
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
